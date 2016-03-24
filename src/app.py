@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 
+import re
 import short_config
 import string
 import random
@@ -40,7 +41,7 @@ def linkInfo(id):
     if results is None:
         return 'No link for %s' % id
 
-    return 'Link id: %s // Link url: %s // Link hits: %s' % (results.link_id, results.link_url, results.link_hits)
+    return render_template('info.html', absPath = short_config.ABS_PATH, shortID=results.link_id, orgURL=results.link_url, hits=results.link_hits)
 
 @app.route('/<path:url>', methods=['GET', 'POST'])
 def initLinkCreation(url):
@@ -48,11 +49,14 @@ def initLinkCreation(url):
 
     if request.method == 'POST' or len(url) >= 12 or any(indicator in url for indicator in URL_INDICATORS):
         resp = setupLinkCreation(url)
+        if resp[0]:
+            return redirect('%s%s+' % (short_config.ABS_PATH, resp[1]), code=301)
+        else:
+            return render_template('index.html', error=resp[1])
     else:
         resp = getShortenedLink(url)
 
     return resp
-    #return 'New URL: %s' % url
 
 def setupLinkCreation(url):
     protocol = getProtocolBool(url)
@@ -60,23 +64,44 @@ def setupLinkCreation(url):
     if protocol == 'unknown':
         url = 'http://%s' % (url)
     elif not protocol:
-        return 'Invalid protocol.'
+        return [False, 'Invalid protocol.']
 
-    if getStatusCodeBool(url) and getGglSafeBrowsingStatus(url) == 'ok':
-        dupeCheck = isDupe(url)
+    if isAlreadyShortLink(url):
+        return [False, 'This link is already a short link from this service.']
 
-        if not dupeCheck:
-            return performLinkCreation(url)
+    if getStatusCodeBool(url):
+        safeBrowsingStatus = getGglSafeBrowsingStatus(url)
+
+        if safeBrowsingStatus == 'ok':
+            dupeCheck = isDupe(url)
+
+            if not dupeCheck:
+                return [True, performLinkCreation(url)]
+            else:
+                return [False, '%s has already been shortened with id %s' % (url, dupeCheck)]
         else:
-            return '%s has already been shortened with id %s' % (url, dupeCheck)
+            return [False, 'Google Safe Browsing reports the following: %s' % safeBrowsingStatus[1]]
     else:
-        return 'Fail!'
+        return [False, 'There was an issue accessing the page. Please verify that it is accessible.']
 
 def performLinkCreation(url):
     newLink = Shortlinks(link_id=getRandomID(), link_url=url, link_hits=0)
     g.db.add(newLink)
     g.db.commit()
-    return 'The link %s has been shortened with the id %s' % (newLink.link_url, newLink.link_id)
+
+    return newLink.link_id
+
+def isAlreadyShortLink(url):
+    try:
+        protocol, url = url.split('://')
+        matchDomain = re.compile(short_config.ABS_PATH.split('://')[1])
+
+        if matchDomain.match(url):
+            return True
+
+        return False
+    except ValueError:
+        return True
 
 def isDupe(url):
     results = g.db.query(Shortlinks).filter_by(link_url=url).first()

@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head>
+	<title>Shortlinks</title>
+</head>
+<body>
+{% if shortID %}
+The link {{ orgURL }} has been shortened to <a href='{{ absPath }}{{ shortID }}' target='_new'>{{ absPath }}{{ shortID }}</a><br />
+It has been accessed {{ hits }} time(s).
+{% endif %}
+
+</body>
+</html>
