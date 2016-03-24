@@ -3,3 +3,6 @@ include/
 lib/
 pip-selfcheck.json
 pyvenv.cfg
+src/short_config.py
+src/__pycache__/*
+src/shortlinks.db

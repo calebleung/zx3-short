@@ -1,0 +1,4 @@
+# See https://developers.google.com/safe-browsing/lookup_guide#GettingStarted
+
+SB_APP_NAME = 'YOUR APP NAME HERE'
+SB_API_KEY = 'YOUR SAFE BROWSING API KEY HERE'
