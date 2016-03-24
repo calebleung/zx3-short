@@ -31,9 +31,14 @@ def teardown_request(exception):
     if db is not None:
         db.close()
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return 'Hello World!'
+    if request.method == 'POST':
+        resp = initLinkCreation(request.form.get('url'), 'POST')
+
+        return resp
+
+    return render_template('index.html')
 
 @app.route('/<path:id>+')
 def linkInfo(id):
@@ -43,16 +48,22 @@ def linkInfo(id):
 
     return render_template('info.html', absPath = short_config.ABS_PATH, shortID=results.link_id, orgURL=results.link_url, hits=results.link_hits)
 
-@app.route('/<path:url>', methods=['GET', 'POST'])
-def initLinkCreation(url):
+@app.route('/<path:url>')
+def initLinkCreation(url, method=None):
     URL_INDICATORS = ['.', '/', '?', '&', '#']
 
-    if request.method == 'POST' or len(url) >= 12 or any(indicator in url for indicator in URL_INDICATORS):
+    if len(url) >= 12 or any(indicator in url for indicator in URL_INDICATORS):
         resp = setupLinkCreation(url)
         if resp[0]:
-            return redirect('%s%s+' % (short_config.ABS_PATH, resp[1]), code=301)
+            if method == 'POST':
+                return '%s%s' % (short_config.ABS_PATH, resp[1])
+            else:
+                return redirect('%s%s+' % (short_config.ABS_PATH, resp[1]), code=301)
         else:
-            return render_template('index.html', error=resp[1])
+            if method == 'POST':
+                return resp[1]
+            else:
+                return render_template('index.html', error=resp[1])
     else:
         resp = getShortenedLink(url)
 
@@ -73,12 +84,12 @@ def setupLinkCreation(url):
         safeBrowsingStatus = getGglSafeBrowsingStatus(url)
 
         if safeBrowsingStatus == 'ok':
-            dupeCheck = isDupe(url)
+            dupeCheck = isDupeByURL(url)
 
             if not dupeCheck:
                 return [True, performLinkCreation(url)]
             else:
-                return [False, '%s has already been shortened with id %s' % (url, dupeCheck)]
+                return [False, '%s has already been shortened at %s%s' % (url, short_config.ABS_PATH, dupeCheck)]
         else:
             return [False, 'Google Safe Browsing reports the following: %s' % safeBrowsingStatus[1]]
     else:
@@ -103,12 +114,19 @@ def isAlreadyShortLink(url):
     except ValueError:
         return True
 
-def isDupe(url):
+def isDupeByURL(url):
     results = g.db.query(Shortlinks).filter_by(link_url=url).first()
     if results is None:
         return False
 
     return results.link_id
+
+def isDupeByID(id):
+    results = g.db.query(Shortlinks).filter_by(link_id=id).first()
+    if results is None:
+        return False
+
+    return results.link_url
 
 def getRandomID():
     character_pool = string.ascii_letters + string.digits
