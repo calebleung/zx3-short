@@ -43,8 +43,6 @@ class GoogleSafetyTests(unittest.TestCase):
         ''' Given address returns 200 in [0] if IT IS in G's list '''
         result = app.getGglSafeBrowsingStatus('http://malware.testing.google.test/testing/malware/')
         self.assertEqual(200, result[0])
-        pass
-
 
 if __name__ == '__main__':
     unittest.main()

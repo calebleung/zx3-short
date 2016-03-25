@@ -1,4 +1,16 @@
+DEBUG = True
+
+# Full URL to short linker including protocol
+ABS_URL = 'http://localhost:5000/'
+
+# Google Safe Browsing details
 # See https://developers.google.com/safe-browsing/lookup_guide#GettingStarted
 
 SB_APP_NAME = 'YOUR APP NAME HERE'
 SB_API_KEY = 'YOUR SAFE BROWSING API KEY HERE'
+
+# "As SQLite connects to local files, the URL format is slightly different. 
+# The “file” portion of the URL is the filename of the database. For a 
+# relative file path, this requires three slashes"
+# http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlite
+DATABASE = 'sqlite:///shortlinks.db'

@@ -46,7 +46,7 @@ def linkInfo(id):
     if results is None:
         return 'No link for %s' % id
 
-    return render_template('info.html', absPath = short_config.ABS_PATH, shortID=results.link_id, orgURL=results.link_url, hits=results.link_hits)
+    return render_template('info.html', absPath = short_config.ABS_URL, shortID=results.link_id, orgURL=results.link_url, hits=results.link_hits)
 
 @app.route('/<path:url>')
 def initLinkCreation(url, method=None):
@@ -56,9 +56,9 @@ def initLinkCreation(url, method=None):
         resp = setupLinkCreation(url)
         if resp[0]:
             if method == 'POST':
-                return '%s%s' % (short_config.ABS_PATH, resp[1])
+                return '%s%s' % (short_config.ABS_URL, resp[1])
             else:
-                return redirect('%s%s+' % (short_config.ABS_PATH, resp[1]), code=301)
+                return redirect('%s%s+' % (short_config.ABS_URL, resp[1]), code=301)
         else:
             if method == 'POST':
                 return resp[1]
@@ -89,7 +89,7 @@ def setupLinkCreation(url):
             if not dupeCheck:
                 return [True, performLinkCreation(url)]
             else:
-                return [False, '%s has already been shortened at %s%s' % (url, short_config.ABS_PATH, dupeCheck)]
+                return [False, '%s has already been shortened at %s%s' % (url, short_config.ABS_URL, dupeCheck)]
         else:
             return [False, 'Google Safe Browsing reports the following: %s' % safeBrowsingStatus[1]]
     else:
@@ -105,7 +105,7 @@ def performLinkCreation(url):
 def isAlreadyShortLink(url):
     try:
         protocol, url = url.split('://')
-        matchDomain = re.compile(short_config.ABS_PATH.split('://')[1])
+        matchDomain = re.compile(short_config.ABS_URL.split('://')[1])
 
         if matchDomain.match(url):
             return True
