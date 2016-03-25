@@ -8,6 +8,7 @@ import short_config
 import string
 import random
 import requests
+import util
 
 engine = create_engine(short_config.DATABASE, echo=short_config.DEBUG)
 Base = automap_base()
@@ -16,6 +17,7 @@ Session = sessionmaker(bind=engine)
 Shortlinks = Base.classes.shortlinks
 
 app = Flask(__name__)
+app.wsgi_app = util.ReverseProxied(app.wsgi_app)
 
 def connectDBSession():
     session = Session()
