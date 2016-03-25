@@ -1,9 +1,8 @@
-import app
 import short_config
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = app.engine
+engine = create_engine(short_config.DATABASE, echo=short_config.DEBUG)
 
 Base = declarative_base()
 
@@ -20,8 +19,7 @@ class Shortlinks(Base):
 
 def init():
     Base.metadata.create_all(engine)
-    session = app.connectDBSession()
-    return session
+    print('Database initialized.')
 
 if __name__ == '__main__':
-    session = init()
+    init()
