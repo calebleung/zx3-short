@@ -7,7 +7,7 @@ I couldn't get it out of my head, so here's a link shortner.
 
 ## Requirements
 
-* Python 3.5 (Flask needs 3.3+, 3.5 was used during dev)
+* Python 3.3 (Flask needs 3.3+, 3.5 was used during dev)
 * Flask
 * SQL Alchemy
 * requests
