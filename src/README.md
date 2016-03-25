@@ -15,4 +15,4 @@ I couldn't get it out of my head, so here's a link shortner.
 
 ## Usage
 
-`python app.py` in the `src` directory will do the trick.
+Run `run_once.py` to create the sqlite db, then a `python app.py` will do the trick.
