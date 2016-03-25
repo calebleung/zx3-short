@@ -16,3 +16,10 @@ I couldn't get it out of my head, so here's a link shortner.
 ## Usage
 
 Run `python run_once.py` to create the sqlite db, then a `python app.py` will do the trick.
+
+## How-to Link
+
+To create a link, either:
+
+* do a POST to / with form data where the name is 'url' and value is the URL to be shortened. A shortened link will be returned.
+* Go to http://example.com/http://linktobe.shortened/here and you will be directed to the info page of the shortened link.
