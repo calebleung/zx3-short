@@ -12,3 +12,7 @@ I couldn't get it out of my head, so here's a link shortner.
 * SQL Alchemy
 * requests
 * [Google Safe Browsing API key](https://developers.google.com/safe-browsing/lookup_guide#GettingStarted)
+
+## Usage
+
+`python app.py` in the `src` directory will do the trick.
