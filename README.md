@@ -20,8 +20,8 @@ Run `python run_once.py` to create the sqlite db, then a `python app.py` will do
 
 ## Endpoints
 
-| Method | Endpoint | Example | Info
-| :---:  | ---      | ---  |
+| Method | Endpoint | Example | Info |
+| :-----:  | ---      | ---  | ----|
 |   GET  |  /*&lt;URL to shorten here&gt;* | http://example.com/https://google.com/  | Creates new shortened link if one doesn't already exist. Redirects to info page for new link |
 | POST | / | http://example.com/ <br />`url:google.com` | Send with `url` form parameter where `url`'s value is the target URL | 
 | GET | /*&lt;short link&gt;* | http://example.com/DnEQg | Redirects to target URL |
