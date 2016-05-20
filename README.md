@@ -18,9 +18,12 @@ I couldn't get it out of my head, so here's a link shortner.
 
 Run `python run_once.py` to create the sqlite db, then a `python app.py` will do the trick.
 
-## How-to Link
+## Endpoints
 
-To create a link, either:
+| Method | Endpoint | Example | Info
+| :---:  | ---      | ---  |
+|   GET  |  /*&lt;URL to shorten here&gt;* | http://example.com/https://google.com/  | Creates new shortened link if one doesn't already exist. Redirects to info page for new link |
+| POST | / | http://example.com/ <br />`url:google.com` | Send with `url` form parameter where `url`'s value is the target URL | 
+| GET | /*&lt;short link&gt;* | http://example.com/DnEQg | Redirects to target URL |
+| GET | /*&lt;short link&gt;*+ | http://example.com/DnEQg+ | Instead of redirecting to target URL, accesses short link info (hit count, target URL) |
 
-* Do a POST to / with form data where the name is 'url' and value is the URL to be shortened. A shortened link will be returned.
-* Go to http://example.com/http://linktobe.shortened/here and you will be directed to the info page of the shortened link.
